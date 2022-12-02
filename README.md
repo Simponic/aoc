@@ -4,7 +4,8 @@
 
 - [x] BASH
   - [Day 0](./day-0)
-- [] C
+- [x] C
+  - [Day 1](./day-1)
 - [] Clojure
 - [] Common LISP
 - [] C++
