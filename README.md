@@ -6,7 +6,8 @@
   - [Day 0](./day-0)
 - [x] C
   - [Day 1](./day-1)
-- [] Clojure
+- [x] Clojure
+  - [Day 2](./day-2)
 - [] Common LISP
 - [] C++
 - [] Dart
