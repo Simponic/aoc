@@ -8,7 +8,8 @@
   - [Day 1](./day-1)
 - [x] Clojure
   - [Day 2](./day-2)
-- [] Common LISP
+- [x] Common LISP
+  - [Day 3](./day-3)
 - [] C++
 - [] Dart
 - [] Elixir
