@@ -12,6 +12,12 @@
 
 using stack_type = std::stack<char>;
 
+enum PROBLEM
+{
+  PROBLEM_1 = 1,
+  PROBLEM_2 = 2
+};
+
 std::tuple<std::vector<stack_type>, int> build_stacks(std::vector<std::string> &lines)
 {
   int num_stacks = std::ceil(lines[0].size() / 4.0);
@@ -42,31 +48,7 @@ std::tuple<std::vector<stack_type>, int> build_stacks(std::vector<std::string> &
   return std::make_tuple(stacks, lines_of_stacks);
 }
 
-std::string solve1(std::vector<stack_type> &stacks, std::vector<std::string> &lines, int start_from)
-{
-  for (auto line = lines.begin() + start_from; line != lines.end(); ++line)
-  {
-    std::istringstream iss(*line);
-    std::string word;
-    int from = 0, to = 0, amount = 0;
-
-    while (iss >> word >> amount >> word >> from >> word >> to)
-      ;
-
-    for (int i = 0; i < amount; i++)
-    {
-      stacks[to - 1].push(stacks[from - 1].top());
-      stacks[from - 1].pop();
-    }
-  }
-
-  std::string result;
-  for (auto &stack : stacks)
-    result += stack.top();
-  return result;
-}
-
-std::string solve2(std::vector<stack_type> &stacks, std::vector<std::string> &lines, int start_from)
+std::string solve(std::vector<stack_type> &stacks, std::vector<std::string> &lines, int start_from, PROBLEM problem)
 {
   stack_type curr;
   for (auto line = lines.begin() + start_from; line != lines.end(); ++line)
@@ -78,16 +60,26 @@ std::string solve2(std::vector<stack_type> &stacks, std::vector<std::string> &li
     while (iss >> word >> amount >> word >> from >> word >> to)
       ;
 
-    for (int i = 0; i < amount; i++)
+    if (problem == PROBLEM_1)
     {
-      curr.push(stacks[from - 1].top());
-      stacks[from - 1].pop();
+      for (int i = 0; i < amount; ++i)
+      {
+        stacks[to - 1].push(stacks[from - 1].top());
+        stacks[from - 1].pop();
+      }
     }
-
-    for (int i = 0; i < amount; i++)
+    else
     {
-      stacks[to - 1].push(curr.top());
-      curr.pop();
+      for (int i = 0; i < amount; ++i)
+      {
+        curr.push(stacks[from - 1].top());
+        stacks[from - 1].pop();
+      }
+      for (int i = 0; i < amount; ++i)
+      {
+        stacks[to - 1].push(curr.top());
+        curr.pop();
+      }
     }
   }
 
@@ -105,9 +97,9 @@ int main()
     lines.push_back(line);
 
   auto [stacks, start_from] = build_stacks(lines);
-  std::cout << "Solve 1: " << solve1(stacks, lines, start_from + 1) << std::endl;
+  std::cout << "Solve 1: " << solve(stacks, lines, start_from + 1, PROBLEM_1) << std::endl;
   auto [stacks2, start_from2] = build_stacks(lines);
-  std::cout << "Solve 2: " << solve2(stacks2, lines, start_from2 + 1) << std::endl;
+  std::cout << "Solve 2: " << solve(stacks2, lines, start_from2 + 1, PROBLEM_2) << std::endl;
 
   return 0;
 }
