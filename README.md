@@ -10,7 +10,8 @@
   - [Day 2](./day-2)
 - [x] Common LISP
   - [Day 3](./day-3)
-- [] C++
+- [x] C++
+  - [Day 4](./day-4)
 - [] Dart
 - [] Elixir
 - [] Emacs Lisp
