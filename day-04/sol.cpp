@@ -61,13 +61,11 @@ std::string solve(std::vector<stack_type> &stacks, std::vector<std::string> &lin
       ;
 
     if (problem == PROBLEM_1)
-    {
       for (int i = 0; i < amount; ++i)
       {
         stacks[to - 1].push(stacks[from - 1].top());
         stacks[from - 1].pop();
       }
-    }
     else
     {
       for (int i = 0; i < amount; ++i)
