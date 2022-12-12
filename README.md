@@ -13,13 +13,16 @@
 - [x] C++
   - [Day 4](./day-4)
 - [] Dart
-- [] Elixir
+- [x] Elixir
+  - [Day 5](./day-5)
 - [] Emacs Lisp
 - [] Haskell
 - [] Java
-- [] JavaScript
+- [x] JavaScript
+  - [Day 6](./day-6)
 - [] Kotlin
 - [] PHP
-- [] Python
+- [x] Python
+  - [Day 11](./day-11)
 - [] Ruby
 - [] TypeScript
