@@ -62,9 +62,6 @@ rotl = reverse . transpose
 rotr :: [[Int]] -> [[Int]]
 rotr = transpose . reverse
 
-mmult :: [[Int]] -> [[Int]] -> [[Int]]
-mmult a b = [[sum $ zipWith (*) ar bc | bc <- (transpose b)] | ar <- a]
-
 main = do
   ls <- fmap Text.lines (Text.readFile "input")
   let digits = map (getDigitsFromString . Text.unpack) ls
