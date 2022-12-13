@@ -25,4 +25,6 @@
 - [x] Python
   - [Day 11](./day-11)
 - [] Ruby
-- [] TypeScript
+- [x] TypeScript
+  - [Day 12](./day-12)
+
