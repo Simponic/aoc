@@ -16,7 +16,8 @@
 - [x] Elixir
   - [Day 5](./day-05)
 - [] Emacs Lisp
-- [] Haskell
+- [x] Haskell
+  - [Day 7](./day-07)
 - [] Java
 - [x] JavaScript
   - [Day 6](./day-06)
