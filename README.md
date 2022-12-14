@@ -18,7 +18,8 @@
 - [] Emacs Lisp
 - [x] Haskell
   - [Day 7](./day-07)
-- [] Java
+- [x] Java
+  - [Day 13](./day-13)
 - [x] JavaScript
   - [Day 6](./day-06)
 - [] Kotlin
