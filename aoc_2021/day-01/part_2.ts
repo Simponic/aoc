@@ -1,5 +1,14 @@
-export const main = async (_lines: string[]): Promise<number | string> => {
-  return 10;
+export const main = async (lines: string[]): Promise<number | string> => {
+  return lines
+    .map((x) => Number(x))
+    .map((_num, i, arr) => {
+      if (i > arr.length - 3) return -1;
+      return arr.slice(i, i + 3).reduce((acc, x) => acc + x, 0);
+    })
+    .map((num, i, arr) => {
+      return i > 0 && arr[i - 1] < num;
+    })
+    .filter((x) => x).length;
 };
 
 //

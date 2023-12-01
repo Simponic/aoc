@@ -16,7 +16,7 @@ else
 fi
 
 exec_test() {
-  bun test
+  bun test "example.test.ts"
 }
 
 exec_part() {
@@ -100,6 +100,7 @@ aoc() {
       mkdir -p $curr
 
       cp -r template/* $curr
+      cd $curr
       get_problem_input $(get_aoc_cookie) $year $day $AOCINPUT
 
       echo "Initialized $curr"
@@ -118,6 +119,7 @@ aoc() {
       aoc init $year $day
     fi
 
+    cd $curr
     exec_test
   fi
 
