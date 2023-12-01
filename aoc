@@ -1,0 +1,145 @@
+#!/bin/zsh
+
+# usage: source ./aoc
+
+AOCTZ="America/New_York"
+AOCSOLS=$([[ $AOCSOLS == "" ]] && echo "$HOME/git/aoc" || echo $AOCSOLS)
+AOCCOOKIE=$([[ $AOCOOKIE == "" ]] && echo "/tmp/aoc_cookie.txt" || echo $AOCCOOKIE)
+AOCINPUT=$([[ $AOCINPUT == "" ]] && echo "problem.txt" || echo $AOCINPUT)
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  pastecmd="pbpaste"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  pastecmd="wl-paste"
+else
+  echo "Unsupported OS"
+fi
+
+exec_test() {
+  bun test
+}
+
+exec_part() {
+  local logfile="logs/out_$1.txt"
+  bun run "part_$1.ts" | tee $logfile
+  echo $(cat $logfile | tail -n 1)
+}
+
+get_aoc_problem_path() {
+  local year=$1
+  local day=$(printf %02d $2)
+
+  echo "aoc_$year/day-$day"
+}
+
+get_problem_input() {
+  local cookie=$1
+  local year=$2
+  local day=$3
+  local out=$4
+  local url="https://adventofcode.com/$year/day/$day/input"
+  echo "Querying $url and saving to $out..."
+  curl --silent --cookie "session=$cookie" $url > $out
+}
+
+submit_problem() {
+  local cookie=$1
+  local year=$2
+  local day=$3
+  local level=$4
+  local answer=$(jq -rn --arg x $5 '$x|@uri')
+  local url="https://adventofcode.com/$year/day/$day/answer"
+
+  echo "Submitting..."
+  local submission=$(curl --silent --cookie "session=$cookie" -X POST $url \
+       -H "Content-Type: application/x-www-form-urlencoded" \
+       -d "level=$level&answer=$answer")
+  echo $submission | pcregrep -o1 -M '<article><p>([\s\S]*?)<\/p><\/article>'
+}
+
+get_aoc_cookie() {
+  if [[ ! -f "$AOCCOOKIE" ]]; then
+    echo "Please copy your Advent of Code cookie to the clipboard, then press Enter..."
+    read -r
+
+    echo "$(pastecmd)" > "$AOCCOOKIE"
+    echo "Cookie saved to $AOCCOOKIE"
+  fi
+  echo $(cat $AOCCOOKIE | tail -n 1)
+}
+
+aoc() {
+  local argc=$#
+
+  if [[ $argc -eq "0" ]]; then
+    echo "/==============================\\"
+    echo "| simponic's bun ts aoc helper |"
+    echo "\\==============================/"
+    echo "+ aoc cookie: get cookie and store to '$AOCCOOKIE'"
+    echo "+ aoc init <? year day>: initialize 'template/' to problem solution and"
+    echo "  pull input to '$AOCINPUT' (today by default)"
+    echo "+ aoc test <? year day>: run 'exec_test' in aoc problem (today by default)"
+    echo "+ aoc submit <1 | 2> <? year day>: submit part one or part two to aoc problem (today by default)"
+  fi
+
+  cd $AOCSOLS
+
+  local prevcwd=$PWD 
+  local year=$(TZ="$AOCTZ" date +"%Y")
+  local day=$(TZ="$AOCTZ" date +"%d")
+  local curr=$(get_aoc_problem_path $year $day)
+
+  if [[ $1 == "init" ]]; then
+    if [[ 3 == $argc ]]; then
+      year=$2
+      day=$3
+      curr=$(get_aoc_problem_path $year $day)
+    fi
+
+    if [[ ! -d $curr ]]; then
+      mkdir -p $curr
+
+      cp -r template/* $curr
+      get_problem_input $(get_aoc_cookie) $year $day $AOCINPUT
+
+      echo "Initialized $curr"
+    else
+      echo "Nothing to initialize"
+    fi
+  fi
+
+  if [[ $1 == "test" ]]; then
+    if [[ 3 == $argc ]]; then
+      year=$2
+      day=$3
+      curr=$(get_aoc_problem_path $year $day)
+    fi
+    if [[ ! -d $curr ]]; then
+      aoc init $year $day
+    fi
+
+    exec_test
+  fi
+
+  if [[ $1 == "submit" ]]; then
+    if [[ 4 == $argc ]]; then
+      year=$3
+      day=$4
+      curr=$(get_aoc_problem_path $year $day)
+    fi
+    cd $curr
+
+    local level=$2
+    local output=$(exec_part $level | tail -n 1)
+
+    echo "..====.."
+    echo "Submitting Answer=($output)"
+    submit_problem $(get_aoc_cookie) $year $day $level $output
+  fi
+
+  if [[ $1 == "cookie" ]]; then
+    get_aoc_cookie
+  fi
+
+  cd $prevcwd
+}
