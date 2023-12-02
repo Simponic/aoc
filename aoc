@@ -102,7 +102,7 @@ aoc() {
 
       cp -r template/* $curr
       cd $curr
-      get_problem_input $(get_aoc_cookie) $year $day $AOCINPUT
+      get_problem_input $(get_aoc_cookie) $year $(echo $day | sed 's/^0*//') $AOCINPUT
 
       echo "Initialized $curr"
     else
@@ -149,7 +149,7 @@ aoc() {
 
     echo "..====.."
     echo "Submitting Answer=($output)"
-    submit_problem $(get_aoc_cookie) $year $day $level $output
+    submit_problem $(get_aoc_cookie) $year $(echo $day | sed 's/^0*//') $level $output
   fi
 
   if [[ $1 == "cookie" ]]; then
