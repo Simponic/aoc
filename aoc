@@ -22,7 +22,7 @@ exec_test() {
 exec_part() {
   local logfile="logs/out_$1.txt"
   bun run "part_$1.ts" | tee $logfile
-  echo $(cat $logfile | tail -n 1)
+  cat $logfile
 }
 
 get_aoc_problem_path() {
@@ -62,7 +62,7 @@ get_aoc_cookie() {
     echo "Please copy your Advent of Code cookie to the clipboard, then press Enter..."
     read -r
 
-    echo "$(pastecmd)" > "$AOCCOOKIE"
+    echo $($pastecmd) > "$AOCCOOKIE"
     echo "Cookie saved to $AOCCOOKIE"
   fi
   echo $(cat $AOCCOOKIE | tail -n 1)
@@ -79,6 +79,7 @@ aoc() {
     echo "+ aoc init <? year day>: initialize 'template/' to problem solution and"
     echo "  pull input to '$AOCINPUT' (today by default)"
     echo "+ aoc test <? year day>: run 'exec_test' in aoc problem (today by default)"
+    echo "+ aoc exec <1 | 2> <? year day>: get the output of an aoc problem without submission"
     echo "+ aoc submit <1 | 2> <? year day>: submit part one or part two to aoc problem (today by default)"
   fi
 
@@ -121,6 +122,18 @@ aoc() {
 
     cd $curr
     exec_test
+  fi
+
+  if [[ $1 == "exec" ]]; then
+    if [[ 4 == $argc ]]; then
+      year=$3
+      day=$4
+      curr=$(get_aoc_problem_path $year $day)
+    fi
+    cd $curr
+
+    local level=$2
+    exec_part $level
   fi
 
   if [[ $1 == "submit" ]]; then
