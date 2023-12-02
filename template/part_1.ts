@@ -13,7 +13,7 @@ const isrun = process.argv.length > 1 && process.argv[1] === import.meta.path;
 if (isrun) {
   const file = Bun.file("./problem.txt");
   const text = await file.text();
-  const lines = text.split("\n");
+  const lines = text.split("\n").filter((x) => x && x.length);
 
   console.log("=== COMPUTATION ===\n");
 
