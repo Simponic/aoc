@@ -27,5 +27,3 @@ export const neighbors = (p1: Vec2, max: Vec2) => {
   }
   return ns;
 };
-
-export const;

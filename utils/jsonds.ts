@@ -29,19 +29,19 @@ export class JSONSet<T extends Object> {
   }
 }
 
-export class JSONHashMap<T extends Object> {
-  private map: Map<string, T>;
+export class JSONHashMap<T extends Object, R extends Object> {
+  private map: Map<string, R>;
 
   constructor() {
-    this.map = new Map<string, T>();
+    this.map = new Map<string, R>();
   }
 
-  set(key: T, value: T): void {
+  set(key: T, value: R): void {
     const keyJson = JSON.stringify(key, Object.keys(key).sort());
     this.map.set(keyJson, value);
   }
 
-  get(key: T): T | undefined {
+  get(key: T): R | undefined {
     const keyJson = JSON.stringify(key, Object.keys(key).sort());
     return this.map.get(keyJson);
   }
@@ -49,6 +49,10 @@ export class JSONHashMap<T extends Object> {
   has(key: T): boolean {
     const keyJson = JSON.stringify(key, Object.keys(key).sort());
     return this.map.has(keyJson);
+  }
+
+  keys(): T[] {
+    return Array.from(this.map.keys()).map((x) => JSON.parse(x) as T);
   }
 
   delete(key: T): boolean {
