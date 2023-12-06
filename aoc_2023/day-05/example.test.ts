@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { main as part1 } from "./part_1";
-import { main as part2, compose, type Pair } from "./part_2";
+import { main as part2, compose, infinity, type Pair } from "./part_2";
 
 const example = `seeds: 79 14 55 13
 
@@ -36,17 +36,17 @@ humidity-to-location map:
 60 56 37
 56 93 4`.split("\n");
 
-//test("part1", async () => {
-//  const answer = 35;
-//  const res = await part1(example);
-//  expect(res).toEqual(answer);
-//});
+test("part1", async () => {
+  const answer = 35;
+  const res = await part1(example);
+  expect(res).toEqual(answer);
+});
 
-//test("part2", async () => {
-//  const answer = 46;
-//  const res = await part2(example);
-//  expect(res).toEqual(answer);
-//});
+test("part2", async () => {
+  const answer = 46;
+  const res = await part2(example);
+  expect(res).toEqual(answer);
+});
 
 test("compose", () => {
   const f1: [Pair, Pair][] = [
@@ -55,8 +55,8 @@ test("compose", () => {
       [3, 35],
     ],
     [
-      [33, Infinity],
-      [33, Infinity],
+      [33, infinity],
+      [33, infinity],
     ],
   ];
   const f2: [Pair, Pair][] = [
@@ -65,8 +65,8 @@ test("compose", () => {
       [-2, 15],
     ],
     [
-      [18, Infinity],
-      [25, Infinity],
+      [18, infinity],
+      [25, infinity],
     ],
   ];
 
@@ -80,8 +80,8 @@ test("compose", () => {
       [25, 42],
     ],
     [
-      [33, Infinity],
-      [40, Infinity],
+      [33, infinity],
+      [40, infinity],
     ],
   ];
 

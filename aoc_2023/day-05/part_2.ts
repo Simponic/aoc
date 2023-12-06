@@ -1,5 +1,7 @@
 import { JSONHashMap } from "@/utils";
 
+export const infinity = Math.pow(2, 42);
+
 export type Pair = [number, number];
 
 const getIntervals = (lines: string[]) => {
@@ -51,7 +53,7 @@ const constructPiecewiseFn = (intervals: number[][]) => {
     const [start, _end] = fromIntervals[0];
     fn.set([0, start - 1], [0, start - 1]);
   }
-  const final: Pair = [fromIntervals.at(-1)![1] + 1, Infinity];
+  const final: Pair = [fromIntervals.at(-1)![1] + 1, infinity];
   fn.set(final, final);
 
   return fn
@@ -76,7 +78,10 @@ export const compose = (f: [Pair, Pair][], g: [Pair, Pair][]) => {
 
       composed.push([
         [start, end],
-        [start + fOffset + gOffset, end + fOffset + gOffset],
+        [
+          start + fOffset + gOffset,
+          Math.min(end + fOffset + gOffset, infinity),
+        ],
       ]);
     }
   }
@@ -92,20 +97,38 @@ export const main = async (lines: string[]): Promise<number | string> => {
     .filter((x) => x)
     .map((x) => parseInt(x));
 
-  const intervals = getIntervals(lines);
-  intervals.forEach((interval, i) => {
-    console.log(" ==== ");
-    //    console.log(interval);
-    console.log(constructPiecewiseFn(interval));
-    const [a, b] = [
-      constructPiecewiseFn(interval),
-      constructPiecewiseFn(intervals[i + 1]),
-    ];
-    if (i === intervals.length - 1) return;
-    console.log(compose(a, b));
-  });
+  const seedIntervals: Pair[] = [];
+  for (let i = 0; i < seeds.length; i += 2) {
+    const [seed, offset] = [seeds[i], seeds[i + 1]];
+    seedIntervals.push([seed, seed + offset]);
+  }
 
-  return 0;
+  const intervals = getIntervals(lines);
+
+  const finalComposition: [Pair, Pair][] = intervals
+    .slice(1)
+    .reduce(
+      (acc, x) => compose(acc, constructPiecewiseFn(x)),
+      constructPiecewiseFn(intervals[0])
+    );
+
+  let min = infinity;
+  for (const [start, end] of seedIntervals) {
+    for (const [domain, range] of finalComposition) {
+      if (start <= domain[1] && domain[0] <= end) {
+        const begin = Math.max(domain[0], start);
+        const last = Math.min(domain[1], end);
+
+        const seedRangeMin = Math.min(
+          range[0] + (begin - domain[0]),
+          range[0] + (last - domain[0])
+        );
+        min = Math.min(min, seedRangeMin);
+      }
+    }
+  }
+
+  return min;
 };
 
 //
