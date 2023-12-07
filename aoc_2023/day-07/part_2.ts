@@ -1,0 +1,98 @@
+export const cardOrder = "A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J"
+  .split(", ")
+  .reverse();
+
+export const score = (hand: string) => {
+  const highestCardNotJoker = hand.split("").reduce(
+    ([card, count], x) => {
+      if (x === "J") return [card, count] as [string, number];
+      const appearances = hand.match(new RegExp(x, "g"))!.length;
+      if (appearances > count) {
+        return [x, appearances] as [string, number];
+      }
+      return [card, count] as [string, number];
+    },
+    ["J", 0] as [string, number]
+  );
+  const newHand = hand.replaceAll("J", highestCardNotJoker[0]);
+  const cards = newHand.split("");
+
+  // five of a kind
+  if (newHand.match(new RegExp(cards[0], "g"))?.length === cards.length)
+    return 6;
+
+  // four of a kind
+  for (const card of cards) {
+    if (newHand.match(new RegExp(card, "g"))?.length === 4) return 5;
+  }
+
+  // full house
+  let threeMatching = cards.some(
+    (card) => newHand.match(new RegExp(card, "g"))?.length === 3
+  );
+  let twoMatching = cards.find(
+    (card) => newHand.match(new RegExp(card, "g"))?.length === 2
+  );
+  if (threeMatching && twoMatching) return 4;
+  if (threeMatching) return 3;
+
+  let twoMatchingUnique = cards.find(
+    (card) =>
+      card !== twoMatching && newHand.match(new RegExp(card, "g"))?.length === 2
+  );
+  if (twoMatchingUnique) return 2;
+
+  if (twoMatching) return 1;
+
+  return 0;
+};
+
+export const main = async (lines: string[]): Promise<number | string> => {
+  const hands: { hand: string; bid: number }[] = lines
+    .map((line) => {
+      const [hand, bidS] = line.split(" ");
+      const bid = parseInt(bidS);
+      return { hand, bid };
+    })
+    .sort(({ hand: handOne }, { hand: handTwo }) => {
+      const scoreOne = score(handOne);
+      const scoreTwo = score(handTwo);
+
+      if (scoreOne === scoreTwo) {
+        let [cardOneScore, cardTwoScore] = [-1, -1];
+        let i = 0;
+        while (cardOneScore === cardTwoScore && i < handOne.length) {
+          cardOneScore = cardOrder.indexOf(handOne[i]);
+          cardTwoScore = cardOrder.indexOf(handTwo[i]);
+          i++;
+        }
+
+        return cardOneScore - cardTwoScore;
+      }
+      return scoreOne - scoreTwo;
+    });
+  console.log(hands);
+
+  return hands.reduce((acc, { hand, bid }, i) => {
+    console.log(hand, bid, i + 1);
+    return acc + bid * (i + 1);
+  }, 0);
+};
+
+//
+
+const isrun = process.argv.length > 1 && process.argv[1] === import.meta.path;
+if (isrun) {
+  const file = Bun.file("./problem.txt");
+  const text = await file.text();
+  const lines = text.split("\n").filter((x) => x && x.length);
+
+  console.log("=== COMPUTATION ===\n");
+
+  const answer = await main(lines);
+
+  console.log("\n=== /COMPUTATION ===\n");
+
+  console.log("=== ANSWER TO P2 ===");
+  console.log(answer);
+}
