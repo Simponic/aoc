@@ -58,12 +58,8 @@ export const main = async (lines: string[]): Promise<number | string> => {
       }
       return scoreOne - scoreTwo;
     });
-  console.log(hands);
 
-  return hands.reduce((acc, { hand, bid }, i) => {
-    console.log(hand, bid, i + 1);
-    return acc + bid * (i + 1);
-  }, 0);
+  return hands.reduce((acc, { bid }, i) => acc + bid * (i + 1), 0);
 };
 
 //
